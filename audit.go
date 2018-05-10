@@ -41,6 +41,7 @@ func loadConfig(configFile string) (*viper.Viper, error) {
 	config.SetDefault("output.syslog.tag", "go-audit")
 	config.SetDefault("output.syslog.attempts", "3")
 	config.SetDefault("log.flags", 0)
+	config.SetDefault("flush_existing_rules", true)
 
 	if err := config.ReadInConfig(); err != nil {
 		return nil, err
@@ -54,11 +55,12 @@ func loadConfig(configFile string) (*viper.Viper, error) {
 
 func setRules(config *viper.Viper, e executor) error {
 	// Clear existing rules
-	if err := e("auditctl", "-D"); err != nil {
-		return fmt.Errorf("Failed to flush existing audit rules. Error: %s", err)
+	if config.GetBool("flush_existing_rules") {
+		if err := e("auditctl", "-D"); err != nil {
+			return fmt.Errorf("Failed to flush existing audit rules. Error: %s", err)
+		}
+		l.Println("Flushed existing audit rules")
 	}
-
-	l.Println("Flushed existing audit rules")
 
 	// Add ours in
 	if rules := config.GetStringSlice("rules"); len(rules) != 0 {

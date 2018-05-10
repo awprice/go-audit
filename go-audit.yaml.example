@@ -88,6 +88,9 @@ log:
   # See also: https://golang.org/pkg/log/#pkg-constants
   flags: 0
 
+# Flush existing rules, default true
+flush_existing_rules: true
+
 rules:
   # Watch all 64 bit program executions
   - -a exit,always -F arch=b64 -S execve

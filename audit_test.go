@@ -35,6 +35,7 @@ func Test_loadConfig(t *testing.T) {
 	assert.Equal(t, 0, config.GetInt("log.flags"), "log.flags should default to 0")
 	assert.Equal(t, 0, l.Flags(), "stdout log flags was wrong")
 	assert.Equal(t, 0, el.Flags(), "stderr log flags was wrong")
+	assert.Equal(t, true, config.GetBool("flush_existing_rules"), "flush_existing_rules should default to true")
 	assert.Nil(t, err)
 
 	// parse error
@@ -50,6 +51,7 @@ func Test_setRules(t *testing.T) {
 	// fail to flush rules
 	config := viper.New()
 
+	config.Set("flush_existing_rules", true)
 	err := setRules(config, func(s string, a ...string) error {
 		if s == "auditctl" && a[0] == "-D" {
 			return errors.New("testing")
