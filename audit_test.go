@@ -62,9 +62,9 @@ func Test_setRules(t *testing.T) {
 
 	assert.EqualError(t, err, "Failed to flush existing audit rules. Error: testing")
 
-	// fail on 0 rules
+	// don't fail on 0 rules
 	err = setRules(config, func(s string, a ...string) error { return nil })
-	assert.EqualError(t, err, "No audit rules found")
+	assert.Nil(t, err)
 
 	// failure to set rule
 	r := 0
